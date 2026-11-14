@@ -1,4 +1,3 @@
-
 package com.gamebuildarchive.backend.entity;
 
 import jakarta.persistence.*;
@@ -28,7 +27,7 @@ public class Publicacion {
     @Column(name = "fecha_actualizacion", nullable = false)
     private OffsetDateTime fechaActualizacion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "videojuego_id", nullable = false)
     private Videojuego videojuego;
 

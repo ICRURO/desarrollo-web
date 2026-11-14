@@ -2,9 +2,11 @@ package com.gamebuildarchive.backend.entity;
 
 import java.lang.annotation.Inherited;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Videojuegos")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Videojuego {
     
     @Id
