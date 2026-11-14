@@ -1,41 +1,73 @@
 package com.gamebuildarchive.backend.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Entity
-@Table(name = "Publicaciones")
+@Table(name = "publicaciones")
 public class Publicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200)
-    private String titulo;
+    // Usuario que creo la publicacion
+    @Column(name = "usuario_id", nullable = false)
+    private Long usuarioId;
 
-    @Column(columnDefinition = "TEXT")
-    private String contenido;
-
-    @Column(name = "fecha_publicacion", nullable = false, updatable = false)
-    private LocalDateTime fechaPublicacion;
-
+    // Videojuego al que pertenece
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "videojuego_id", nullable = false)
     private Videojuego videojuego;
 
+    @Column(name = "titulo", nullable = false, length = 180)
+    private String titulo;
+
+    @Column(name = "resumen", columnDefinition = "TEXT")
+    private String resumen;
+
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private OffsetDateTime fechaCreacion;
+
+    @Column(name = "fecha_actualizacion", nullable = false)
+    private OffsetDateTime fechaActualizacion;
+
     public Publicacion() {
     }
 
+    // Asignar fechas cuando se crea la publicacion
     @PrePersist
-    public void establishFechaPublicacion() {
-        if (fechaPublicacion == null) {
-            fechaPublicacion = LocalDateTime.now();
-        }
+    public void antesDeGuardar() {
+        OffsetDateTime ahora = OffsetDateTime.now(ZoneOffset.UTC);
+        fechaCreacion = ahora;
+        fechaActualizacion = ahora;
+    }
+
+    // Actualizar la fecha cuando se modifica
+    @PreUpdate
+    public void antesDeActualizar() {
+        fechaActualizacion = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public Videojuego getVideojuego() {
+        return videojuego;
+    }
+
+    public void setVideojuego(Videojuego videojuego) {
+        this.videojuego = videojuego;
     }
 
     public String getTitulo() {
@@ -46,23 +78,19 @@ public class Publicacion {
         this.titulo = titulo;
     }
 
-    public String getContenido() {
-        return contenido;
+    public String getResumen() {
+        return resumen;
     }
 
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
+    public void setResumen(String resumen) {
+        this.resumen = resumen;
     }
 
-    public LocalDateTime getFechaPublicacion() {
-        return fechaPublicacion;
+    public OffsetDateTime getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public Videojuego getVideojuego() {
-        return videojuego;
-    }
-
-    public void setVideojuego(Videojuego videojuego) {
-        this.videojuego = videojuego;
+    public OffsetDateTime getFechaActualizacion() {
+        return fechaActualizacion;
     }
 }
