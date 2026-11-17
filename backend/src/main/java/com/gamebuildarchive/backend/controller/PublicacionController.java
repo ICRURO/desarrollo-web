@@ -5,7 +5,9 @@ import com.gamebuildarchive.backend.repository.PublicacionRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +25,32 @@ public class PublicacionController {
     @GetMapping
     public ResponseEntity<List<Publicacion>> listarPublicaciones(
             @RequestParam(required = false) String titulo,
-            @RequestParam(required = false) Long videojuegoId) {
+            @RequestParam(required = false) Long videojuegoId,
+            @RequestParam(required = false) Long usuarioId) {
+
+        List<Specification<Publicacion>> filtros = new ArrayList<>();
         
-        if (titulo != null && !titulo.isEmpty()) {
-            return ResponseEntity.ok(publicacionRepository.findByTituloContainingIgnoreCase(titulo));
-        } else if (videojuegoId != null) {
-            return ResponseEntity.ok(publicacionRepository.findByVideojuegoId(videojuegoId));
+        if (titulo != null && !titulo.isBlank()) {
+            String busqueda = titulo.trim().toLowerCase();
+            filtros.add((root, query, cb) -> cb.like(cb.lower(root.get("titulo")), "%" + busqueda + "%"));
         }
-        return ResponseEntity.ok(publicacionRepository.findAll());
+
+        if (videojuegoId != null) {
+            filtros.add((root, query, cb) -> cb.equal(root.get("videojuego").get("id"), videojuegoId));
+        }
+
+        if (usuarioId != null) {
+            filtros.add((root, query, cb) -> cb.equal(root.get("usuarioId"), usuarioId));
+        }
+
+        List<Publicacion> resultados;
+
+        if (filtros.isEmpty()) {
+            resultados = publicacionRepository.findAll();
+        } else {
+            resultados = publicacionRepository.findAll(Specification.allOf(filtros));
+        }
+        return ResponseEntity.ok(resultados);
     }
 
     @PostMapping
