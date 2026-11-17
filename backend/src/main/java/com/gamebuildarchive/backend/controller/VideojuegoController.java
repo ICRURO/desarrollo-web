@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/videojuegos")
@@ -20,13 +21,44 @@ public class VideojuegoController {
     }
 
     @GetMapping
-    public List<Videojuego> listarVideojuegos() {
-        return videojuegoRepository.findAll();
+    public ResponseEntity<List<Videojuego>> listarVideojuegos(
+            @RequestParam(required = false) String nombre) {
+        
+        if (nombre != null && !nombre.isEmpty()) {
+            return ResponseEntity.ok(videojuegoRepository.findByNombreContainingIgnoreCase(nombre));
+        }
+        return ResponseEntity.ok(videojuegoRepository.findAll());
     }
 
     @PostMapping
     public ResponseEntity<Videojuego> crearVideojuego(@RequestBody Videojuego videojuego) {
         Videojuego guardado = videojuegoRepository.save(videojuego);
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Videojuego> actualizarVideojuego(@PathVariable Long id, @RequestBody Videojuego detallesVideojuego) {
+        Optional<Videojuego> videojuegoExistente = videojuegoRepository.findById(id);
+        
+        if (videojuegoExistente.isPresent()) {
+            Videojuego videojuego = videojuegoExistente.get();
+            videojuego.setDescripcion(detallesVideojuego.getDescripcion());
+            videojuego.setGenero(detallesVideojuego.getGenero());
+            
+            Videojuego actualizado = videojuegoRepository.save(videojuego);
+            return ResponseEntity.ok(actualizado);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarVideojuego(@PathVariable Long id) {
+        if (videojuegoRepository.existsById(id)) {
+            videojuegoRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
