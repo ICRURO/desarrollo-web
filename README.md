@@ -4,41 +4,43 @@
 
 GameBuildArchive es una aplicación web para consultar y compartir guías sobre videojuegos. Inicialmente contempla **Hearts of Iron IV**, **Zenless Zone Zero** y **Dying Light**.
 
-La prioridad del proyecto es la **comunidad de publicaciones públicas**: usuarios identificados, guías y bloques de texto e imagen. Los comentarios y el simulador de configuraciones (*Build Planner*) son ampliaciones previstas para fases posteriores.
+La prioridad del proyecto es la comunidad de publicaciones públicas: usuarios identificados, guías y bloques de texto e imagen. Los comentarios y el simulador de configuraciones (Build Planner) son ampliaciones previstas para fases posteriores.
 
-> **Estado actual — Entrega 2:** el proyecto Spring Boot inicia y se ha comprobado su conexión con PostgreSQL. El esquema de las 13 tablas está disponible en `database/esquema.sql`. La integración de los controladores REST, las operaciones GET/POST y las pruebas con `curl` todavía están en desarrollo; no se presenta aquí como una API terminada.
+> **Estado — Entrega 3 (16 de noviembre de 2026):** se comprobaron GET y POST de videojuegos y publicaciones y filtros de publicaciones por título, videojuego y usuario, incluyendo combinaciones. PUT y DELETE fueron implementados y la validación integral de respuestas HTTP. 
 
 ## Tecnologías
 
 - **Backend:** Java 17, Spring Boot 4.1.2, Maven, Spring Web MVC y Spring Data JPA (Hibernate).
 - **Base de datos:** PostgreSQL (probado con PostgreSQL 18.6 en Ubuntu/WSL).
-- **Frontend previsto:** HTML, CSS y JavaScript, mediante `fetch` para consumir la API REST.
-- **Entorno utilizado:** Ubuntu en WSL sobre Windows.
+- **Frontend previsto:** HTML, CSS y JavaScript; API `fetch`.
+- **Entorno:** Ubuntu en WSL sobre Windows
 - **Control de versiones:** Git y GitHub.
 
 ## Estructura del repositorio
 
 ```text
 desarrollo-web/
-├── backend/                       # Proyecto Maven / Spring Boot
+├── backend/                
 │   ├── pom.xml
 │   ├── mvnw
 │   └── src/main/
 │       ├── java/com/gamebuildarchive/backend/
 │       └── resources/application.properties
 ├── database/
-│   └── esquema.sql                 # Estructura de las 13 tablas
+│   └── esquema.sql          
 ├── documentacion/
-│   ├── diseño/                     # Modelo y documentos de diseño
-│   ├── IAG/                        # Informes de uso de IA
-│   └── reportes/                   # Reportes de avance
-├── frontend/                       # Interfaz en desarrollo
+│   ├── diseño/              
+│   ├── IAG/                
+│   │   └── r-ia-dev-s03/
+│   ├── reportes/
+│   │   └── r-act-3.md
+├── frontend/                
 └── README.md
 ```
 
 ## Instalación en otra computadora (Windows con WSL)
 
-Estas instrucciones están pensadas para una instalación nueva. Si ya se cuenta con WSL, Git, Java o PostgreSQL, se puede omitir la instalación correspondiente.
+Las instrucciones son para una instalación nueva. Si ya se cuenta con WSL, Git, Java o PostgreSQL, omitir esos pasos.
 
 ### 1. Preparar Ubuntu en WSL
 
@@ -48,25 +50,18 @@ Desde PowerShell en Windows, si WSL todavía no está instalado:
 wsl --install
 ```
 
-Completar la instalación de Ubuntu y reiniciar Windows si el sistema lo solicita. Abrir Ubuntu/WSL para continuar con los siguientes comandos.
+Completar instalación de Ubuntu y reiniciar Windows si hace falta. Continuar los pasos desde Ubuntu/WSL.
 
 ### 2. Instalar Git, Java y PostgreSQL
-
-Desde la terminal de Ubuntu/WSL:
 
 ```bash
 sudo apt update
 sudo apt install git openjdk-17-jdk postgresql postgresql-contrib -y
-```
-
-Comprobar Java e iniciar PostgreSQL:
-
-```bash
 java -version
 sudo service postgresql start
 ```
 
-> La versión de PostgreSQL disponible puede variar según la versión de Ubuntu. El proyecto se ha probado con PostgreSQL 18.6.
+> La versión de PostgreSQL disponible puede variar. El proyecto fue probado con PostgreSQL 18.6.
 
 ### 3. Clonar el repositorio
 
@@ -79,13 +74,11 @@ cd desarrollo-web
 
 ### 4. Crear usuario y base de datos PostgreSQL
 
-Ingresar como usuario administrador de PostgreSQL:
-
 ```bash
 sudo -u postgres psql
 ```
 
-Dentro de `psql`, ejecutar:
+Dentro de `psql`:
 
 ```sql
 CREATE USER gamebuild_user;
@@ -94,42 +87,36 @@ CREATE DATABASE gamebuild OWNER gamebuild_user;
 \q
 ```
 
-El comando `\password` solicita una contraseña de forma interactiva. Conservarla: se necesitará para importar el esquema y ejecutar Spring Boot. **No agregar esta contraseña al repositorio.**
-
-> Los comandos `CREATE USER` y `CREATE DATABASE` se usan en una instalación nueva. Si ya existen, no es necesario repetirlos.
+El comando `\password` establece la contraseña de forma interactiva. No incluir contraseñas reales en Git. Si el usuario y la base ya existen, no volver a crearlos.
 
 ### 5. Restaurar las 13 tablas
 
-Desde la **carpeta raíz del repositorio** (`desarrollo-web/`), no desde `psql`, ejecutar:
+Desde la **raíz del repositorio**:
 
 ```bash
 psql -h localhost -U gamebuild_user -d gamebuild -v ON_ERROR_STOP=1 -f database/esquema.sql
 ```
 
-Ingresar la contraseña definida en el paso anterior. Este script debe importarse en una base de datos nueva y vacía; no está diseñado para ejecutarse repetidamente sobre tablas existentes.
+Importar en una base nueva y vacía. No repetir el script sobre tablas ya existentes.
 
-Comprobar las tablas:
+Comprobar el esquema:
 
 ```bash
 psql -h localhost -U gamebuild_user -d gamebuild
 ```
 
-Dentro de `psql`:
-
 ```sql
 \dt
-SELECT COUNT(*)
-FROM information_schema.tables
-WHERE table_schema = 'public'
-  AND table_type = 'BASE TABLE';
+SELECT COUNT(*) FROM information_schema.tables
+ WHERE table_schema = 'public' AND table_type = 'BASE TABLE';
 \q
 ```
 
-El resultado esperado del conteo es **13**.
+Se esperan 13 tablas.
 
-### 6. Configurar la contraseña para Spring Boot
+### 6. Configurar Spring Boot
 
-La conexión ya está definida en `backend/src/main/resources/application.properties`:
+En `backend/src/main/resources/application.properties` se configura:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/gamebuild
@@ -140,63 +127,54 @@ spring.jpa.show-sql=true
 spring.jpa.open-in-view=false
 ```
 
-La propiedad `spring.jpa.hibernate.ddl-auto=none` evita que Hibernate genere o modifique automáticamente el esquema: las tablas se crean con el SQL del paso 5.
-
-Para indicar la contraseña de manera temporal en la terminal WSL:
+`ddl-auto=none` evita modificaciones automáticas del esquema por Hibernate. La contraseña se indica en la misma terminal WSL donde se arranque Spring Boot:
 
 ```bash
-read -r -s -p "Contraseña de PostgreSQL: " GAMEBUILD_DB_PASSWORD
+read -r -s -p 'Contraseña de PostgreSQL: ' GAMEBUILD_DB_PASSWORD
 echo
 export GAMEBUILD_DB_PASSWORD
 ```
 
-La variable solo se conserva en esa sesión de terminal. Si se abre otra terminal o se reinicia WSL, habrá que definirla nuevamente para arrancar el backend.
+La variable es temporal para esa terminal; no se sube a Git.
 
-### 7. Ejecutar el backend
-
-En **la misma terminal** donde se definió `GAMEBUILD_DB_PASSWORD`:
+### 7. Ejecutar backend
 
 ```bash
 cd backend
+./mvnw clean compile
 ./mvnw spring-boot:run
 ```
 
-Si el script no tiene permiso de ejecución, usar primero `chmod +x mvnw` dentro de `backend/`.
+Si `mvnw` no es ejecutable, primero `chmod +x mvnw`. Con el backend iniciado, la API queda disponible en `http://localhost:8080`.
 
-En un inicio correcto se observan mensajes similares a estos:
+## Modelo de datos
 
-```text
-HikariPool-1 - Start completed.
-Initialized JPA EntityManagerFactory
-Tomcat started on port 8080
-Started BackendApplication
-```
-
-El servidor queda escuchando en **http://localhost:8080**. Una respuesta HTTP 404 en `/` puede ser normal mientras no exista un controlador que atienda esa ruta. Para detenerlo, presionar `Ctrl + C`.
-
-## Modelo de datos y estado de desarrollo
-
-Las 13 tablas del modelo se organizan en tres fases:
+Las 13 tablas se dividen en tres fases:
 
 | Fase | Tablas | Alcance |
 |---|---|---|
-| 1. Comunidad | `usuarios`, `videojuegos`, `publicaciones`, `bloques_publicacion` | Prioridad del desarrollo |
+| 1. Comunidad | `usuarios`, `videojuegos`, `publicaciones`, `bloques_publicacion` | Prioridad de desarrollo |
 | 2. Interacción | `comentarios`, `etiquetas`, `publicacion_etiquetas`, `reacciones` | Ampliación |
 | 3. Enciclopedia y builds | `elementos_jugables`, `habilidades`, `equipamiento`, `builds_guardadas`, `build_equipamiento` | Ampliación posterior |
 
-El documento de diseño está en `documentacion/diseño/modelo-de-datos.md`.
+Diseño de datos: `documentacion/diseño/modelo-de-datos.md`.
 
-**Avances comprobados hasta ahora:** proyecto Spring Boot creado; dependencia de Spring Data JPA y driver PostgreSQL agregadas; conexión a PostgreSQL comprobada desde WSL; creación y exportación de 13 tablas; entidades y repositorios iniciales de `Videojuego` y `Publicacion`; corrección de la entidad `Publicacion` para adaptarla al esquema; compilación de Maven satisfactoria.
+## Avance de la entrega 3
 
-**Pendiente de integrar y verificar:** entidad de usuarios y bloques, correspondencia de todas las entidades con el esquema, controladores y endpoints GET/POST, inserción de datos de prueba y pruebas con `curl`. El sistema de inicio de sesión tampoco está implementado todavía.
+Reporte: [`documentacion/reportes/r-act-3.md`](documentacion/reportes/r-act-3.md). 
+
+Las sesiones con IA se documentan en `documentacion/IAG/r-ia-dev-s03/`.
 
 ## Solución de problemas frecuentes
 
-- **`Connection refused` al conectar con PostgreSQL:** comprobar que se inició con `sudo service postgresql start`.
-- **`password authentication failed`:** revisar el usuario y su contraseña; el valor de `GAMEBUILD_DB_PASSWORD` debe coincidir con la contraseña asignada a `gamebuild_user`.
-- **`Could not resolve placeholder GAMEBUILD_DB_PASSWORD`:** definir y exportar la variable en la misma terminal antes de iniciar Spring Boot.
-- **`relation ... does not exist`:** importar `database/esquema.sql` en la base `gamebuild` y verificar `\dt`.
-- **`Address already in use: 8080`:** comprobar si otro proceso ya está utilizando ese puerto y detenerlo antes de volver a arrancar.
+- **`Connection refused` a PostgreSQL:** iniciar servicio con `sudo service postgresql start`.
+- **`password authentication failed`:** verificar usuario, contraseña y valor de `GAMEBUILD_DB_PASSWORD`.
+- **`Could not resolve placeholder GAMEBUILD_DB_PASSWORD`:** definir la variable en la misma terminal antes de ejecutar el backend.
+- **`relation ... does not exist`:** importar `database/esquema.sql` y revisar `\dt`.
+- **`Address already in use: 8080`:** detener otro proceso que use el puerto.
+- **`findAll(Specification)` no encontrado al compilar:** asegurar que `PublicacionRepository` extienda `JpaSpecificationExecutor<Publicacion>`.
+- **HTTP 500 en POST de publicación:** revisar registros de Spring Boot, campos obligatorios (`usuarioId`) y claves foráneas a usuarios y videojuegos existentes.
+- **HTTP 404 en `/api/usuarios`:** puede no haber un controlador para ese endpoint; no implica que la tabla `usuarios` no exista.
 
 ## Repositorio
 
