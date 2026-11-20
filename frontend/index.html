@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GameBuildArchive, wiki y comunidad de guías de videojuegos.">
+  <title>GameBuildArchive | Wiki de videojuegos</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="cabecera" id="inicio">
+    <div class="cabecera-interior">
+      <a class="logo" href="#inicio" aria-label="GameBuildArchive, inicio">
+        <span class="logo-cuadro" aria-hidden="true">G</span>
+        <span>GameBuild<span class="logo-resaltado">Archive</span></span>
+      </a>
+      <nav class="enlaces-superiores" aria-label="Navegación superior">
+        <a href="#videojuegos">Videojuegos</a>
+        <a href="#articulos">Artículos</a>
+        <a class="enlace-contribuir" href="#crear-guia">Crear guía</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="estructura">
+    <aside class="barra-lateral" aria-label="Menú de la wiki">
+      <p class="lateral-titulo">LA WIKI</p>
+      <nav class="menu-lateral" aria-label="Secciones">
+        <a href="#inicio" class="seleccionado">Inicio</a>
+        <a href="#videojuegos">Videojuegos</a>
+        <a href="#articulos">Artículos y guías</a>
+        <a href="#crear-guia">Crear publicación</a>
+      </nav>
+      <div class="separador-lateral"></div>
+      <p class="lateral-titulo">EXPLORAR JUEGOS</p>
+      <nav class="menu-lateral" aria-label="Juegos disponibles">
+        <a href="#hoi4">Hearts of Iron IV</a>
+        <a href="#zzz">Zenless Zone Zero</a>
+        <a href="#dyinglight">Dying Light</a>
+      </nav>
+      <div class="nota-lateral">
+        <strong>GameBuildArchive</strong>
+        <p>Un espacio para consultar y compartir información de videojuegos.</p>
+      </div>
+    </aside>
+
+    <main class="principal">
+      <div class="ruta">GameBuildArchive <span aria-hidden="true">/</span> Página principal</div>
+      <section class="bienvenida" aria-labelledby="titulo-inicio">
+        <p class="sobretitulo">WIKI DE VIDEOJUEGOS</p>
+        <h1 id="titulo-inicio">Bienvenido a GameBuildArchive</h1>
+        <p>Una wiki creada para compartir guías, consejos e información sobre tus videojuegos favoritos. Explora los temas disponibles o prepara tu propia publicación.</p>
+        <a class="boton boton-claro" href="#videojuegos">Explorar videojuegos</a>
+      </section>
+
+      <div class="columnas-contenido">
+        <div class="contenido-central">
+          <section class="seccion" id="videojuegos" aria-labelledby="titulo-videojuegos">
+            <div class="encabezado-seccion">
+              <h2 id="titulo-videojuegos">Videojuegos</h2>
+              <span class="etiqueta-simple">3 juegos del proyecto</span>
+            </div>
+            <p class="texto-secundario">Selecciona un juego para consultar el espacio de sus guías.</p>
+            <div class="tarjetas-juegos">
+              <a class="tarjeta-juego" href="#articulos" id="hoi4">
+                <span class="bloque-juego bloque-azul" aria-hidden="true">HOI IV</span>
+                <span class="tarjeta-cuerpo"><strong>Hearts of Iron IV</strong><small>Estrategia e historia</small></span>
+              </a>
+              <a class="tarjeta-juego" href="#articulos" id="zzz">
+                <span class="bloque-juego bloque-violeta" aria-hidden="true">ZZZ</span>
+                <span class="tarjeta-cuerpo"><strong>Zenless Zone Zero</strong><small>Acción y personajes</small></span>
+              </a>
+              <a class="tarjeta-juego" href="#articulos" id="dyinglight">
+                <span class="bloque-juego bloque-verde" aria-hidden="true">DL</span>
+                <span class="tarjeta-cuerpo"><strong>Dying Light</strong><small>Supervivencia y exploración</small></span>
+              </a>
+            </div>
+          </section>
+
+          <section class="seccion" id="articulos" aria-labelledby="titulo-articulos">
+            <div class="encabezado-seccion"><h2 id="titulo-articulos">Artículos y guías</h2></div>
+            <p class="texto-secundario">Así se verán las publicaciones de la comunidad. Estos ejemplos son solo parte del diseño.</p>
+            <div class="lista-articulos">
+              <article class="articulo">
+                <div><span class="categoria-articulo">Hearts of Iron IV</span><h3>Guía básica para empezar</h3><p>Un espacio para explicar las mecánicas principales y compartir estrategias.</p></div>
+                <span class="indicador-articulo" aria-hidden="true">›</span>
+              </article>
+              <article class="articulo">
+                <div><span class="categoria-articulo">Zenless Zone Zero</span><h3>Personajes y recomendaciones</h3><p>Consejos para conocer mejor a los personajes y sus configuraciones.</p></div>
+                <span class="indicador-articulo" aria-hidden="true">›</span>
+              </article>
+              <article class="articulo">
+                <div><span class="categoria-articulo">Dying Light</span><h3>Consejos de supervivencia</h3><p>Información útil para explorar el mundo del juego.</p></div>
+                <span class="indicador-articulo" aria-hidden="true">›</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="seccion" id="crear-guia" aria-labelledby="titulo-crear">
+            <div class="encabezado-seccion"><h2 id="titulo-crear">Crear una guía</h2></div>
+            <p class="texto-secundario">Formulario preparado para la siguiente etapa, cuando se conecte con la API.</p>
+            <form class="formulario" id="form-publicacion" autocomplete="off">
+              <div class="fila-campos">
+                <div class="campo">
+                  <label for="titulo">Título de la guía <span aria-hidden="true">*</span></label>
+                  <input id="titulo" name="titulo" type="text" maxlength="180" required placeholder="Ej. Guía para principiantes">
+                </div>
+                <div class="campo">
+                  <label for="videojuego">Videojuego <span aria-hidden="true">*</span></label>
+                  <select id="videojuego" name="videojuegoId" required>
+                    <option value="" selected>Selecciona un videojuego</option>
+                    <option value="hoi4">Hearts of Iron IV</option>
+                    <option value="zzz">Zenless Zone Zero</option>
+                    <option value="dyinglight">Dying Light</option>
+                  </select>
+                </div>
+              </div>
+              <div class="campo">
+                <label for="resumen">Resumen de la guía</label>
+                <textarea id="resumen" name="resumen" rows="5" placeholder="Escribe una introducción sobre tu guía..."></textarea>
+              </div>
+              <div class="acciones-formulario">
+                <button type="reset" class="boton boton-borde">Limpiar</button>
+                <button type="button" class="boton boton-oscuro" disabled title="Se habilitará al integrar la API">Publicar guía</button>
+              </div>
+              <p class="nota-formulario">El botón de publicar se habilitará al implementar JavaScript y la conexión con Spring Boot. Los videojuegos deberán cargarse desde la base de datos.</p>
+            </form>
+          </section>
+        </div>
+
+        <aside class="panel-derecho" aria-label="Información de la comunidad">
+          <section class="panel-informativo">
+            <h2>Sobre esta wiki</h2>
+            <p>GameBuildArchive es un proyecto de Desarrollo Web enfocado en una comunidad de guías de videojuegos.</p>
+            <div class="dato-simple"><span>Temáticas</span><strong>3 videojuegos</strong></div>
+            <div class="dato-simple"><span>Contenido</span><strong>Guías y artículos</strong></div>
+          </section>
+          <section class="panel-informativo">
+            <h2>¿Cómo participar?</h2>
+            <p>Elige un videojuego, escribe una guía y compártela con la comunidad cuando esté disponible la publicación.</p>
+            <a class="enlace-texto" href="#crear-guia">Ir al formulario</a>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <footer class="pie">GameBuildArchive · Proyecto académico de Desarrollo Web</footer>
+</body>
+</html>
