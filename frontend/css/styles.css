@@ -62,12 +62,11 @@ h2 { font-size: 19px; margin: 0; }
 .tarjeta-cuerpo strong { font-size: 13px; }
 .tarjeta-cuerpo small { color: var(--secundario); font-size: 11px; }
 .lista-articulos { border: 1px solid var(--borde); border-radius: 4px; }
-.articulo { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 17px 18px; }
+.articulo { display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 17px 18px; }
 .articulo + .articulo { border-top: 1px solid var(--borde); }
 .categoria-articulo { color: #346b99; font-weight: bold; font-size: 11px; }
 .articulo h3 { margin: 3px 0 5px; font-size: 15px; color: #263f55; }
 .articulo p { margin: 0; color: var(--secundario); font-size: 12px; }
-.indicador-articulo { color: #9daab6; font-size: 30px; }
 .panel-derecho { display: flex; flex-direction: column; gap: 18px; }
 .panel-informativo { border: 1px solid var(--borde); border-radius: 5px; background: var(--blanco); padding: 18px; }
 .panel-informativo h2 { font-size: 15px; padding-bottom: 12px; margin-bottom: 11px; border-bottom: 2px solid #dae4ed; }
@@ -89,8 +88,31 @@ h2 { font-size: 19px; margin: 0; }
 .boton-borde { background: white; border-color: #b8c8d5; color: #324d63; }
 .boton-oscuro { background: var(--azul); color: white; }
 .boton:disabled { opacity: .5; cursor: not-allowed; }
-.nota-formulario { font-size: 11px; color: #738190; margin: -7px 0 0; }
 .pie { padding: 18px 24px; background: var(--cabecera); color: #c6d5df; text-align: center; font-size: 12px; }
+
+/* Alertas de confirmación y error */
+.alerta-oculta { display: none; }
+.alerta { padding: 12px 16px; border-radius: 4px; margin-bottom: 18px; font-size: 13px; font-weight: bold; border: 1px solid transparent; }
+.alerta-exito { background: #dff0d8; color: #2b542c; border-color: #c3e6cb; }
+.alerta-error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+/* Barra de filtros y botones de acción */
+.barra-filtros { display: flex; gap: 10px; margin-bottom: 14px; }
+.barra-filtros input { flex: 1; background: #fff; border: 1px solid #c8d3dd; border-radius: 4px; padding: 8px 12px; font-size: 13px; }
+.articulo-cabecera { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.articulo-acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-mini { padding: 5px 10px; font-size: 11px; border-radius: 3px; border: 1px solid #c8d3dd; background: #f8fafc; cursor: pointer; font-weight: bold; }
+.btn-mini:hover { background: #e4eaf0; }
+.btn-peligro { color: #9d3a3a; border-color: #e2b4b4; }
+.btn-peligro:hover { background: #f8d7da; }
+
+/* Caja de observaciones/comentarios */
+.caja-comentarios { margin-top: 8px; padding-top: 12px; border-top: 1px dashed var(--borde); font-size: 12px; }
+.lista-comentarios { display: grid; gap: 6px; margin-bottom: 8px; }
+.item-comentario { background: #f4f7f9; padding: 8px 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+.form-comentario { display: flex; gap: 8px; }
+.form-comentario input { flex: 1; padding: 6px 10px; border: 1px solid #c8d3dd; border-radius: 4px; font-size: 12px; }
+
 @media (max-width: 1150px) { .columnas-contenido { grid-template-columns: minmax(0,1fr); } .panel-derecho { display: grid; grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) { .cabecera-interior { padding: 15px; align-items: flex-start; flex-direction: column; gap: 12px; } .enlaces-superiores { gap: 12px; font-size: 12px; flex-wrap: wrap; } .estructura { grid-template-columns: 1fr; } .barra-lateral { border-right: 0; border-bottom: 1px solid var(--borde); padding: 14px; } .barra-lateral .lateral-titulo, .barra-lateral .separador-lateral, .barra-lateral .nota-lateral { display: none; } .menu-lateral { flex-direction: row; flex-wrap: wrap; gap: 4px; } .menu-lateral a { padding: 7px 9px; } .menu-lateral a.seleccionado { padding-left: 6px; } .principal { padding: 18px 14px 32px; } .bienvenida { padding: 25px 20px; } .seccion { padding: 19px 16px; } .tarjetas-juegos { grid-template-columns: 1fr; } .bloque-juego { min-height: 72px; } .panel-derecho { grid-template-columns: 1fr; } .fila-campos { grid-template-columns: 1fr; } }
 @media (max-width: 370px) { .logo { font-size: 18px; } .encabezado-seccion { align-items: flex-start; flex-direction: column; } }
