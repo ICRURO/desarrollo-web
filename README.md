@@ -6,7 +6,7 @@ GameBuildArchive es una aplicación web para consultar y compartir guías sobre 
 
 La prioridad del proyecto es la comunidad de publicaciones públicas: usuarios identificados, guías y bloques de texto e imagen. Los comentarios y el simulador de configuraciones (Build Planner) son ampliaciones previstas para fases posteriores.
 
-> **Estado — Entrega 3 (16 de noviembre de 2026):** se comprobaron GET y POST de videojuegos y publicaciones y filtros de publicaciones por título, videojuego y usuario, incluyendo combinaciones. PUT y DELETE fueron implementados y la validación integral de respuestas HTTP. 
+> **Estado — Entrega 4 (20 de noviembre de 2026):** Se implementó el frontend y se verificó su integración con la API REST y PSQL. Se puede consultar desde la página principal publicaciones, crearlas, editarlas y eliminarlas, se pueden realizar busquedas y aplicar filtros.  
 
 ## Tecnologías
 
@@ -34,7 +34,13 @@ desarrollo-web/
 │   │   └── r-ia-dev-s03/
 │   ├── reportes/
 │   │   └── r-act-3.md
-├── frontend/                
+├── frontend/ 
+ |       |── css/
+ |       |    |── styles.css
+ |       |── img/
+ |       |── js/
+ |       |    |── app.js
+ |       |── index.html
 └── README.md
 ```
 
@@ -147,6 +153,16 @@ cd backend
 
 Si `mvnw` no es ejecutable, primero `chmod +x mvnw`. Con el backend iniciado, la API queda disponible en `http://localhost:8080`.
 
+### 8. Ejecutar el frontend
+
+```bash
+cd frontend
+python3 -m http.server 5500
+```
+
+Abrir http://localhost:5500 en el navegador. Mantener activo el servidor de Spring Boot para que el frontend pueda obtener y modificar los datos.
+
+
 ## Modelo de datos
 
 Las 13 tablas se dividen en tres fases:
@@ -159,11 +175,26 @@ Las 13 tablas se dividen en tres fases:
 
 Diseño de datos: `documentacion/diseño/modelo-de-datos.md`.
 
-## Avance de la entrega 3
+## Avance de la entrega 4
 
-Reporte: [`documentacion/reportes/r-act-3.md`](documentacion/reportes/r-act-3.md). 
+Reporte: [`documentacion/reportes/r-act-4.md`](documentacion/reportes/r-act-4.md). 
 
-Las sesiones con IA se documentan en `documentacion/IAG/r-ia-dev-s03/`.
+Backend y API REST
+- Consulta de videojuegos y publicaciones mediante endpoints GET.
+- Creación, actualización y eliminación de publicaciones mediante POST, PUT y DELETE.
+- Búsqueda de publicaciones por título, videojuego y usuario; el backend admite filtros combinados.
+- Persistencia de datos en PostgreSQL mediante Spring Data JPA.
+- Operaciones de consulta, creación y eliminación de observaciones/comentarios utilizadas por el frontend.
+
+Frontend
+- Página principal con navegación, presentación de videojuegos y listado de artículos y guías.
+- Visualización de publicaciones recuperadas de la API.
+- Formulario para crear y editar publicaciones.
+- Botones para editar y eliminar publicaciones.
+- Búsqueda por título y selección de videojuego para filtrar las guías.
+- Sección de observaciones por publicación, con opciones para consultar, agregar y eliminar.
+- Solicitudes fetch para comunicarse con Spring Boot.
+- Mensajes visuales de confirmación y error, incluyendo validación básica del formulario.
 
 ## Solución de problemas frecuentes
 
