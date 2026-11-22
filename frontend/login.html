@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | GameBuildArchive</title>
+  <link rel="stylesheet" href="css/styles.css">
+ </head>
+ <body>
+  <header class="cabecera">
+   <div class="cabecera-interior">
+    <a class="logo" href="index.html" aria-label="GameBuildArchive, inicio">
+     <span class="logo-cuadro" aria-hidden="true">G</span>
+     <span>GameBuild<span class="logo-resaltado">Archive</span></span>
+    </a>
+    <nav class="enlaces-superiores" aria-label="Navegación superior">
+     <a href="index.html#videojuegos">Videojuegos</a>
+     <a href="index.html#articulos">Artículos</a>
+     <span class="zona-sesion" id="zona-sesion"></span>
+    </nav>
+   </div>
+  </header>
+
+  <div class="estructura estructura-simple">
+   <main class="principal">
+    <div class="ruta">GameBuildArchive <span aria-hidden="true">/</span> Iniciar sesión</div>
+    <div id="alerta-sistema" class="alerta-oculta" role="alert" aria-live="polite"></div>
+    <section class="seccion pagina-acceso" aria-labelledby="titulo-login">
+     <div class="encabezado-seccion"><h2 id="titulo-login">Iniciar sesión</h2></div>
+     <p class="texto-secundario">Entra con tu cuenta para publicar guías y dejar observaciones.</p>
+     <form class="formulario" id="form-login" autocomplete="on" novalidate>
+      <div class="campo">
+       <label for="identificador">Usuario o correo <span aria-hidden="true">*</span></label>
+       <input id="identificador" name="identificador" type="text" maxlength="150" required autocomplete="username" placeholder="Ej. jugador123">
+        </div>
+        <div class="campo">
+         <label for="password">Contraseña <span aria-hidden="true">*</span></label>
+         <input id="password" name="password" type="password" maxlength="64" required autocomplete="current-password" placeholder="Tu contraseña">
+        </div>
+        <div class="acciones-formulario">
+         <button type="submit" id="btn-login" class="boton boton-oscuro">Iniciar sesión</button>
+        </div>
+       </form>
+         <p class="pie-formulario">¿Aún no tienes cuenta? <a href="registro.html">Regístrate</a></p>
+    </section>
+   </main>
+    </div>
+    <footer class="pie">GameBuildArchive · Proyecto académico de Desarrollo Web</footer>
+    <script src="js/auth.js"></script>
+    <script src="js/login.js"></script>
+    </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro | GameBuildArchive</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="cabecera-interior">
+      <a class="logo" href="index.html" aria-label="GameBuildArchive, inicio">
+        <span class="logo-cuadro" aria-hidden="true">G</span>
+        <span>GameBuild<span class="logo-resaltado">Archive</span></span>
+      </a>
+      <nav class="enlaces-superiores" aria-label="Navegación superior">
+        <a href="index.html#videojuegos">Videojuegos</a>
+        <a href="index.html#articulos">Artículos</a>
+        <span class="zona-sesion" id="zona-sesion"></span>
+      </nav>
+    </div>
+  </header>
+  <div class="estructura estructura-simple">
+    <main class="principal">
+      <div class="ruta">GameBuildArchive <span aria-hidden="true">/</span> Registro</div>
+      <div id="alerta-sistema" class="alerta-oculta" role="alert" aria-live="polite"></div>
+      <section class="seccion pagina-acceso" aria-labelledby="titulo-registro">
+        <div class="encabezado-seccion"><h2 id="titulo-registro">Crear una cuenta</h2></div>
+        <p class="texto-secundario">Regístrate para publicar guías y comentar en la comunidad.</p>
+        <form class="formulario" id="form-registro" autocomplete="off" novalidate>
+          <div class="campo">
+            <label for="nombre-usuario">Nombre de usuario <span aria-hidden="true">*</span></label>
+            <input id="nombre-usuario" name="nombreUsuario" type="text" maxlength="50" required autocomplete="username" placeholder="Ej. jugador123">
+          </div>
+          <div class="campo">
+            <label for="correo">Correo electrónico <span aria-hidden="true">*</span></label>
+            <input id="correo" name="correo" type="email" maxlength="150" required autocomplete="email" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="fila-campos">
+            <div class="campo">
+              <label for="password">Contraseña <span aria-hidden="true">*</span></label>
+              <input id="password" name="password" type="password" minlength="8" maxlength="64" required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+            </div>
+            <div class="campo">
+              <label for="confirmar-password">Confirmar contraseña <span aria-hidden="true">*</span></label>
+              <input id="confirmar-password" name="confirmarPassword" type="password" minlength="8" maxlength="64" required autocomplete="new-password" placeholder="Repite la contraseña">
+            </div>
+          </div>
+          <p class="texto-secundario" style="margin:0;">La contraseña debe tener de 8 a 64 caracteres, con al menos una letra y un número.</p>
+          <div class="acciones-formulario">
+            <button type="submit" id="btn-registro" class="boton boton-oscuro">Crear cuenta</button>
+          </div>
+        </form>
+        <p class="pie-formulario">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+      </section>
+    </main>
+  </div>
+  <footer class="pie">GameBuildArchive · Proyecto académico de Desarrollo Web</footer>
+  <script src="js/auth.js"></script>
+  <script src="js/registro.js"></script>
+</body>
+</html>

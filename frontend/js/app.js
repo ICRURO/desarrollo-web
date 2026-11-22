@@ -1,23 +1,40 @@
-const API_BASE = "http://localhost:8080/api";
-const USUARIO_ACTUAL_ID = 1;
+let publicacionesCargadas = [];
+let nombresUsuarios = {};
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarUsuarios();
+  actualizarFormularioSegunSesion();
   cargarVideojuegos();
   cargarPublicaciones();
   configurarEventos();
 });
 
-function mostrarMensaje(texto, tipo = "exito") {
-  const alerta = document.getElementById("alerta-sistema");
-  if (!alerta) return;
+async function cargarUsuarios() {
+  try {
+    const resp = await fetch(`${API_BASE}/usuarios`);
+    if (!resp.ok) throw new Error(`Error HTTP ${resp.status} al cargar usuarios`);
 
-  alerta.textContent = texto;
-  alerta.className = `alerta ${tipo === "exito" ? "alerta-exito" : "alerta-error"}`;
+    const usuarios = await resp.json();
+    nombresUsuarios = {};
+    usuarios.forEach((u) => {
+      nombresUsuarios[u.id] = u.nombreUsuario;
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-  clearTimeout(alerta._temporizador);
-  alerta._temporizador = setTimeout(() => {
-    alerta.className = "alerta-oculta";
-  }, 5000);
+function nombreDeUsuario(id) {
+  return nombresUsuarios[id] || `Usuario #${id}`;
+}
+
+function actualizarFormularioSegunSesion() {
+  const form = document.getElementById("form-publicacion");
+  const aviso = document.getElementById("aviso-sesion");
+  const conSesion = Boolean(usuarioActual());
+
+  form.style.display = conSesion ? "" : "none";
+  aviso.style.display = conSesion ? "none" : "block";
 }
 
 async function cargarVideojuegos() {
@@ -69,15 +86,30 @@ async function cargarPublicaciones(filtros = {}) {
 function renderizarPublicaciones(publicaciones) {
   const contenedor = document.querySelector(".lista-articulos");
   contenedor.innerHTML = "";
+  publicacionesCargadas = publicaciones;
 
   if (publicaciones.length === 0) {
     contenedor.innerHTML = '<p class="texto-secundario" style="padding:16px;">No hay publicaciones que coincidan con la búsqueda.</p>';
     return;
   }
 
+  const usuario = usuarioActual();
+
   publicaciones.forEach((pub) => {
     const nombreJuego = pub.videojuego ? pub.videojuego.nombre : "General";
-    const juegoId = pub.videojuego ? pub.videojuego.id : "";
+    const esAutor = Boolean(usuario) && usuario.id === pub.usuarioId;
+
+    const botonesAutor = esAutor
+      ? `<button type="button" class="btn-mini" onclick="prepararEdicion(${pub.id})">Editar</button>
+         <button type="button" class="btn-mini btn-peligro" onclick="eliminarPublicacion(${pub.id})">Eliminar</button>`
+      : "";
+
+    const formularioComentario = usuario
+      ? `<form class="form-comentario" onsubmit="enviarComentario(event, ${pub.id})">
+           <input type="text" id="input-comentario-${pub.id}" placeholder="Escribe una observación o comentario..." required>
+           <button type="submit" class="btn-mini">Comentar</button>
+         </form>`
+      : '<small>Para comentar, <a href="login.html">inicia sesión</a>.</small>';
 
     const article = document.createElement("article");
     article.className = "articulo";
@@ -86,20 +118,17 @@ function renderizarPublicaciones(publicaciones) {
         <div>
           <span class="categoria-articulo">${escaparHTML(nombreJuego)}</span>
           <h3>${escaparHTML(pub.titulo)}</h3>
+          <small class="autor-articulo">Por ${escaparHTML(nombreDeUsuario(pub.usuarioId))}</small>
           <p>${escaparHTML(pub.resumen || "Sin resumen disponible.")}</p>
         </div>
       </div>
       <div class="articulo-acciones">
-        <button type="button" class="btn-mini" onclick="prepararEdicion(${pub.id}, '${escaparAtributo(pub.titulo)}', '${escaparAtributo(pub.resumen || "")}', '${juegoId}')">Editar</button>
-        <button type="button" class="btn-mini btn-peligro" onclick="eliminarPublicacion(${pub.id})">Eliminar</button>
+        ${botonesAutor}
         <button type="button" class="btn-mini" onclick="toggleComentarios(${pub.id})">Observaciones</button>
       </div>
       <div id="comentarios-box-${pub.id}" class="caja-comentarios" style="display:none;">
         <div id="lista-comentarios-${pub.id}" class="lista-comentarios"></div>
-        <form class="form-comentario" onsubmit="enviarComentario(event, ${pub.id})">
-          <input type="text" id="input-comentario-${pub.id}" placeholder="Escribe una observación o comentario..." required>
-          <button type="submit" class="btn-mini">Comentar</button>
-        </form>
+        ${formularioComentario}
       </div>
     `;
     contenedor.appendChild(article);
@@ -108,6 +137,11 @@ function renderizarPublicaciones(publicaciones) {
 
 async function guardarPublicacion(e) {
   e.preventDefault();
+
+  if (!usuarioActual()) {
+    mostrarMensaje("Debes iniciar sesión para publicar una guía.", "error");
+    return;
+  }
 
   const idEdicion = document.getElementById("publicacion-id").value;
   const titulo = document.getElementById("titulo").value.trim();
@@ -122,7 +156,7 @@ async function guardarPublicacion(e) {
   const payload = {
     titulo: titulo,
     resumen: resumen,
-    usuarioId: USUARIO_ACTUAL_ID,
+    usuarioId: usuarioActual().id,
     videojuego: { id: Number(videojuegoId) }
   };
 
@@ -161,11 +195,14 @@ async function guardarPublicacion(e) {
   }
 }
 
-function prepararEdicion(id, titulo, resumen, videojuegoId) {
-  document.getElementById("publicacion-id").value = id;
-  document.getElementById("titulo").value = titulo;
-  document.getElementById("resumen").value = resumen;
-  document.getElementById("videojuego").value = videojuegoId;
+function prepararEdicion(id) {
+  const pub = publicacionesCargadas.find((p) => p.id === id);
+  if (!pub) return;
+
+  document.getElementById("publicacion-id").value = pub.id;
+  document.getElementById("titulo").value = pub.titulo;
+  document.getElementById("resumen").value = pub.resumen || "";
+  document.getElementById("videojuego").value = pub.videojuego ? pub.videojuego.id : "";
 
   document.getElementById("titulo-crear").textContent = `Editando guía #${id}`;
   document.getElementById("btn-submit-publicacion").textContent = "Guardar cambios";
@@ -225,14 +262,19 @@ async function cargarComentarios(publicacionId) {
       return;
     }
 
+    const usuario = usuarioActual();
+
     lista.innerHTML = comentarios
-      .map(
-        (c) => `
+      .map((c) => {
+        const botonEliminar = usuario && usuario.id === c.usuarioId
+          ? `<button type="button" class="btn-mini btn-peligro" onclick="eliminarComentario(${c.id}, ${publicacionId})">×</button>`
+          : "";
+        return `
         <div class="item-comentario">
-          <span><strong>Usuario #${c.usuarioId}:</strong> ${escaparHTML(c.contenido)}</span>
-          <button type="button" class="btn-mini btn-peligro" onclick="eliminarComentario(${c.id}, ${publicacionId})">×</button>
-        </div>`
-      )
+          <span><strong>${escaparHTML(nombreDeUsuario(c.usuarioId))}:</strong> ${escaparHTML(c.contenido)}</span>
+          ${botonEliminar}
+        </div>`;
+      })
       .join("");
   } catch (error) {
     console.error(error);
@@ -252,7 +294,7 @@ async function enviarComentario(e, publicacionId) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         publicacionId: publicacionId,
-        usuarioId: USUARIO_ACTUAL_ID,
+        usuarioId: usuarioActual().id,
         contenido: contenido
       })
     });
@@ -277,9 +319,15 @@ async function eliminarComentario(comentarioId, publicacionId) {
     const resp = await fetch(`${API_BASE}/comentarios/${comentarioId}`, {
       method: "DELETE"
     });
+
     if (resp.status === 204 || resp.ok) {
       mostrarMensaje("Observación eliminada (HTTP 204).", "exito");
       await cargarComentarios(publicacionId);
+    } else if (resp.status === 404) {
+      mostrarMensaje("La observación ya no existe (HTTP 404).", "error");
+      await cargarComentarios(publicacionId);
+    } else {
+      throw new Error(`HTTP ${resp.status}`);
     }
   } catch (error) {
     console.error(error);
@@ -329,8 +377,4 @@ function escaparHTML(texto) {
   const div = document.createElement("div");
   div.textContent = texto;
   return div.innerHTML;
-}
-
-function escaparAtributo(texto) {
-  return String(texto).replace(/'/g, "\\'").replace(/"/g, "&quot;");
 }

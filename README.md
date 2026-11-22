@@ -12,7 +12,8 @@ La prioridad del proyecto es la comunidad de publicaciones públicas: usuarios i
 
 - **Backend:** Java 17, Spring Boot 4.1.2, Maven, Spring Web MVC y Spring Data JPA (Hibernate).
 - **Base de datos:** PostgreSQL (probado con PostgreSQL 18.6 en Ubuntu/WSL).
-- **Frontend previsto:** HTML, CSS y JavaScript; API `fetch`.
+- **Frontend:** HTML, CSS y JavaScript; API `fetch`.
+- **Cuentas de usuario:** contraseñas cifradas con BCrypt (`spring-security-crypto`).
 - **Entorno:** Ubuntu en WSL sobre Windows
 - **Control de versiones:** Git y GitHub.
 
@@ -196,6 +197,34 @@ Frontend
 - Solicitudes fetch para comunicarse con Spring Boot.
 - Mensajes visuales de confirmación y error, incluyendo validación básica del formulario.
 
+## Registro e inicio de sesión
+
+Páginas: `frontend/registro.html` y `frontend/login.html`. El módulo `frontend/js/auth.js` guarda al usuario en el navegador (`localStorage`) y el encabezado muestra "Hola, usuario" y el botón **Salir**. Sin sesión iniciada no se puede publicar ni comentar desde la interfaz.
+
+Reglas del registro (se validan en el navegador y de nuevo en el backend):
+
+- **Usuario:** de 3 a 50 caracteres (letras, números, punto, guion y guion bajo), único sin distinguir mayúsculas.
+- **Correo:** formato `texto@dominio.extension`, único, y se guarda en minúsculas.
+- **Contraseña:** de 8 a 64 caracteres, con al menos una letra y un número. Se guarda cifrada con BCrypt; nunca se almacena ni se devuelve en texto plano.
+
+| Método | Endpoint | Respuestas |
+|---|---|---|
+| POST | `/api/usuarios/registro` | 201, 400 (datos inválidos), 409 (usuario o correo repetido) |
+| POST | `/api/usuarios/login` | 200, 400, 401 (usuario o contraseña incorrectos) |
+| GET | `/api/usuarios` | 200 (solo `id` y `nombreUsuario`) |
+
+Prueba con curl:
+
+```bash
+curl -i -X POST http://localhost:8080/api/usuarios/registro \
+  -H "Content-Type: application/json" \
+  -d '{"nombreUsuario":"demo1","correo":"demo1@example.com","password":"clave12345"}'
+
+curl -i -X POST http://localhost:8080/api/usuarios/login \
+  -H "Content-Type: application/json" \
+  -d '{"identificador":"demo1","password":"clave12345"}'
+```
+
 ## Solución de problemas frecuentes
 
 - **`Connection refused` a PostgreSQL:** iniciar servicio con `sudo service postgresql start`.
@@ -205,7 +234,8 @@ Frontend
 - **`Address already in use: 8080`:** detener otro proceso que use el puerto.
 - **`findAll(Specification)` no encontrado al compilar:** asegurar que `PublicacionRepository` extienda `JpaSpecificationExecutor<Publicacion>`.
 - **HTTP 500 en POST de publicación:** revisar registros de Spring Boot, campos obligatorios (`usuarioId`) y claves foráneas a usuarios y videojuegos existentes.
-- **HTTP 404 en `/api/usuarios`:** puede no haber un controlador para ese endpoint; no implica que la tabla `usuarios` no exista.
+- **HTTP 409 al registrarse:** el nombre de usuario o el correo ya existen (se comparan sin distinguir mayúsculas).
+- **No puedo entrar con el usuario 1 de ejemplo:** si se insertó a mano, su `password_hash` no es un hash BCrypt. Registrar una cuenta nueva desde `registro.html`.
 
 ## Repositorio
 
