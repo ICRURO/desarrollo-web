@@ -457,3 +457,56 @@ curl -i "http://localhost:8080/api/publicaciones?titulo=guia&videojuegoId=1&usua
 ```
 
 Los IDs deben corresponder a registros existentes en PostgreSQL.
+
+## Reporte 4
+
+### Fecha
+
+Dia 21
+
+### Herramienta
+
+ChatGPT Modelo 6
+
+### Prompt original 1
+
+> Ahora quiero agregar un fondo a GameBuildArchive. En lugar de dejar solamente un color liso alrededor de la página, quiero una imagen que reúna la temática de Hearts of Iron IV, Zenless Zone Zero y Dying Light. La parte principal de la wiki debe seguir siendo legible. Ayúdame con la imagen y explícame cómo ponerla de fondo utilizando el CSS que ya tengo.
+
+**Respuesta de la IA:**
+
+Se trabajó en una imagen temática para el fondo y se indicó guardarla en `frontend/img/`. Para mostrarla detrás de la página se recomendó colocar `background-image` en el selector `body`, usar `background-size: cover`, centrar la imagen y evitar que se repitiera. También se conservó un contenedor principal con un fondo blanco ligeramente transparente para que el texto no perdiera legibilidad.
+
+**CSS aplicado:**
+
+```css
+body {
+    margin: 0;
+    background-image: url("../img/fongo-wiki.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+}
+
+.estructura {
+    display: grid;
+    grid-template-columns: 224px minmax(0, 1fr);
+    max-width: 1200px;
+    margin: 30px auto;
+    min-height: calc(100vh - 120px);
+    background-color: rgba(255, 255, 255, 0.96);
+}
+```
+
+### Prompt original 2
+
+> Ya agregué el `background-image` al archivo `styles.css`, pero al abrir la página sigo sin ver el cambio. El archivo de imagen está dentro de la carpeta `img`. ¿Puedes revisar cómo se escriben las rutas relativas desde CSS y qué debo comprobar para que se muestre el fondo?
+
+**Respuesta de la IA:**
+
+Se revisó la ruta relativa, tomando en cuenta que `styles.css` está en `frontend/css/` y las imágenes en `frontend/img/`. Para regresar un nivel de carpeta se utiliza `../img/`. También se identificó que el archivo real se llamaba **`fongo-wiki.png`**, por lo que escribir `fondo-wiki.png` no encontraba la imagen. Se indicó conservar exactamente el nombre guardado en la carpeta y volver a cargar la página.
+
+---
